@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lavindev/hmm.png?branch=master)](https://travis-ci.org/lavindev/hmm)
+
 # Hidden Markov Models
 
 ### Prerequisites
