@@ -1,7 +1,7 @@
 # Hidden Markov Models
 
 ### Prerequisites
-Python 2 or 3  
+Python 2.7 or 3.4 or greater  
 numpy>=1.14.0  
 tabulate>=0.8.2  
 pytest>=3.5.0  
