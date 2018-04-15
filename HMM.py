@@ -160,7 +160,7 @@ class HMM(object):
         # calculations/indexing later
         b0_vector = np.zeros((1, self.n_states))
         for k in range(n):
-            b0_vector[0, k] = pi0[k] * B[k, seq[0]] * M[0, j]
+            b0_vector[0, k] = pi0[k] * B[k, seq[0]] * M[0, k]
 
         return M, b0_vector
 
