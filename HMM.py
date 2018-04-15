@@ -27,6 +27,7 @@ from __future__ import print_function
 
 from tabulate import tabulate
 import numpy as np
+import pdb
 
 
 class HMM(object):
@@ -115,6 +116,7 @@ class HMM(object):
                 # finally, multiply term with emission probability of
                 # observed output at time t
                 M[t, k] = tmp * B[k, seq[t]]
+
         return M
 
     def backward_algorithm(self, seq):
@@ -127,6 +129,7 @@ class HMM(object):
 
         A = self.A
         B = self.B
+        pi0 = self.pi0
         n = self.n_states
 
         # infer time steps
@@ -154,14 +157,17 @@ class HMM(object):
 
         # calculate beta_0 vector separately
         # we don't want it interfering with our
-        # calculations later
+        # calculations/indexing later
         b0_vector = np.zeros((1, self.n_states))
         for k in range(n):
             tmp = 0
             for j in range(n):
                 emission_prob = B[j, seq[0]]
                 beta_t = M[0, j]
-                tmp += A[k, j] * emission_prob * beta_t
+                # for beta_0, we use the initial state vector instead
+                # of the transition matrix
+                transition_prob = pi0[j] if j == k else 0
+                tmp += transition_prob * emission_prob * beta_t
             b0_vector[0, k] = tmp
 
         return M, b0_vector
@@ -175,14 +181,14 @@ class HMM(object):
         """
         return sum(M[-1])
 
-    def beta0sum(self, M):
+    def beta0sum(self, b0):
         """
         Returns beta_0 sum
 
-        :param M: Input matrix
+        :param M: beta_0 vector
         :return: sum of probabilities at time = 0 (first row)
         """
-        return sum(M[0])
+        return sum(b0[0])
 
     def forward_backward(self, seq):
         """
@@ -204,8 +210,9 @@ class HMM(object):
         beta_matrix, b0_vector = self.backward_algorithm(seq)
 
         M = np.zeros((T, self.n_states))
-        alpha_T = self.alphaTsum(alpha_matrix)
 
+        # we could also use beta_0 = self.beta0sum(b0_vector)
+        alpha_T = self.alphaTsum(alpha_matrix)
         for t in range(T):
             for i in range(n):
                 M[t, i] = (alpha_matrix[t, i] * beta_matrix[t, i]) / alpha_T
