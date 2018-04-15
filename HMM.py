@@ -160,15 +160,7 @@ class HMM(object):
         # calculations/indexing later
         b0_vector = np.zeros((1, self.n_states))
         for k in range(n):
-            tmp = 0
-            for j in range(n):
-                emission_prob = B[j, seq[0]]
-                beta_t = M[0, j]
-                # for beta_0, we use the initial state vector instead
-                # of the transition matrix
-                transition_prob = pi0[j] if j == k else 0
-                tmp += transition_prob * emission_prob * beta_t
-            b0_vector[0, k] = tmp
+            b0_vector[0, k] = pi0[k] * B[k, seq[0]] * M[0, j]
 
         return M, b0_vector
 

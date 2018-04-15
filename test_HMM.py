@@ -104,14 +104,16 @@ def example_model():
     B = np.array([[0.3, 0.4, 0.3],
                   [0.4, 0.3, 0.3]])
 
-    expected = np.array([[0.0324, 0.0297],
-                         [0.09, 0.09],
-                         [0.3, 0.3],
-                         [1.0, 1.0]])
+    pi0 = np.array([0.8, 0.2])
+    expected = np.array([[0.765957, 0.234043],
+                         [0.595745, 0.404255],
+                         [0.478723, 0.521277],
+                         [0.443617, 0.556383]])
 
     seq = ['R', 'W', 'B', 'B']
 
     model = HMM(A, B,
+                pi0=pi0,
                 states=['S1', 'S2'],
                 emissions=['R', 'W', 'B'])
 
@@ -122,7 +124,7 @@ def check_float_array(a1, a2, tolerance=1e-6):
     assert a1.shape == a2.shape
 
     f1 = np.ndarray.flatten(a1)
-    f2 = np.ndarray.flatten(a1)
+    f2 = np.ndarray.flatten(a2)
 
     for i in range(len(f1)):
         assert abs(f1[i] - f2[i]) <= tolerance
@@ -133,4 +135,7 @@ def test_forward_backward():
     for model in tests:
         m, s, e = model()
         res = m.forward_backward(s)
-        check_float_array(res, e)
+        try:
+            check_float_array(res, e)
+        except AssertionError:
+            pytest.fail("res != expected")
