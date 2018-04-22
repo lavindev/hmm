@@ -50,3 +50,4 @@ print(model)
 
 res = model.forward_backward(seq)
 model.print_matrix(res)
+# 

@@ -37,8 +37,8 @@ class HMM(object):
         :param A: Transition matrix of shape (n, n) (n = number of states)
         :param B: Emission matrix of shape (n, b) (b = number of outputs)
         :param pi0: Initial State Probability vector of size n, leave blank for uniform probabilities
-        :param states: State names as list for pretty printing
-        :param emissions: Emission names as list for pretty printing
+        :param states: State names/labels as list
+        :param emissions: Emission names/labels as list
         :raises: Assertion error on bad input parameters
         """
         self.A = A
@@ -211,11 +211,25 @@ class HMM(object):
 
         return M
 
-    def viterbi(self):
+    def viterbi(self, seq):
         """
-        TODO
+        :param seq: observed sequence
+        :return: Viterbi path as python list
         """
-        raise NotImplementedError
+        # convert sequence to integers
+        if all(isinstance(i, str) for i in seq):
+            seq = [self.emissions.index(i) for i in seq]
+        
+        A = self.A
+        B = self.B
+        pi0 = self.pi0
+        n = self.n_states
+        state_names = self.states
+        emission_names = self.emissions
+
+        pass
+        
+        
 
     def _matrix_repr(self, M, headers=None):
         """

@@ -53,11 +53,13 @@ def ncsa_model():
 
     seq = ['PS', 'SI', 'PS']
 
+    viterbi_path = ['NA', 'AP', 'AC']
+
     model = HMM(A, B,
                 states=['NA', 'AP', 'AC'],
                 emissions=['PS', 'SI'])
 
-    return model, seq, expected
+    return model, seq, expected, viterbi_path
 
 
 @pytest.fixture(scope="module")
@@ -84,11 +86,13 @@ def gene_model():
 
     seq = ['A', 'C', 'G', 'T', 'G', 'G', 'C', 'A']
 
+    viterbi_path = ['NG', 'NG', 'G', 'G', 'G', 'G', 'NG', 'NG']
+
     model = HMM(A, B,
                 states=['G', 'NG'],
                 emissions=['A', 'C', 'G', 'T'])
 
-    return model, seq, expected
+    return model, seq, expected, viterbi_path
 
 
 @pytest.fixture(scope="module")
@@ -112,12 +116,14 @@ def example_model():
 
     seq = ['R', 'W', 'B', 'B']
 
+    viterbi_path = ['S1', 'S1', 'S2', 'S2']
+
     model = HMM(A, B,
                 pi0=pi0,
                 states=['S1', 'S2'],
                 emissions=['R', 'W', 'B'])
 
-    return model, seq, expected
+    return model, seq, expected, viterbi_path
 
 
 def check_float_array(a1, a2, tolerance=1e-6):
@@ -133,9 +139,20 @@ def check_float_array(a1, a2, tolerance=1e-6):
 def test_forward_backward():
     tests = [ncsa_model, gene_model, example_model]
     for model in tests:
-        m, s, e = model()
+        m, s, e, vp = model()
         res = m.forward_backward(s)
         try:
             check_float_array(res, e)
         except AssertionError:
             pytest.fail("res != expected")
+
+def test_viterbi():
+    tests = [ncsa_model, gene_model, example_model]
+    for model in tests:
+        m, s, e, vp = model()
+        res = m.viterbi(s)
+        try:
+            assert vp == res
+        except AssertionError:
+            pytest.fail("Viterbi path does not match expected path - model #{}".format(tests.index(model) + 1))
+
