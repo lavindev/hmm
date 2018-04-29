@@ -116,7 +116,7 @@ def example_model():
 
     seq = ['R', 'W', 'B', 'B']
 
-    viterbi_path = ['S1', 'S1', 'S2', 'S2']
+    viterbi_path = ['S1', 'S1', 'S1', 'S1']
 
     model = HMM(A, B,
                 pi0=pi0,
